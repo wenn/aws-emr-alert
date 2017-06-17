@@ -1,13 +1,10 @@
 package com.wen.emr
 
-import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
+import com.amazonaws.services.lambda.runtime.Context
 
-object Alert extends RequestHandler[TriggerEvent, Context] {
-
-  override def handleRequest(event: TriggerEvent, context: Context): Context = {
-    println(event.name)
-
-    context
+class Alert {
+  def handler(event: TriggerEvent, context: Context): Unit = {
+    println(event.detail)
   }
 }
 
