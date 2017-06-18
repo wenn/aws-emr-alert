@@ -28,5 +28,5 @@ spark.token=<api token>
 ```
 
 ## Client Support
-1. Cisco Spark
+- Cisco Spark
 
