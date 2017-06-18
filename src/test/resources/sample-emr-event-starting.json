@@ -1,0 +1,18 @@
+{
+  "version": "0",
+  "id": "8535abb0-f87e-4640-b7b6-8de000dfc30a",
+  "detail-type": "EMR Cluster State Change",
+  "source": "aws.emr",
+  "account": "123456789012",
+  "time": "2016-12-16T21:00:23Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+    "severity": "INFO",
+    "stateChangeReason": "{\"code\":\"USER_REQUEST\",\"message\":\"Terminated by user request\"}",
+    "name": "Development Cluster",
+    "clusterId": "j-1YONHTCP3YZKC",
+    "state": "STARTING",
+    "message": ""
+  }
+}

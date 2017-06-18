@@ -12,10 +12,13 @@ class MessageBuilderSpec
     with MustMatchers {
 
   trait Fixture {
-    val eventJson = {
+    val terminatedJson = readFile("/sample-emr-event-terminated.json")
+    val startingJson = readFile("/sample-emr-event-starting.json")
+
+    def readFile(filePath: String) = {
       Source.fromInputStream(
         getClass
-          .getResourceAsStream("/sample-emr-event.json"))
+          .getResourceAsStream(filePath))
         .getLines
         .mkString
     }
@@ -26,16 +29,27 @@ class MessageBuilderSpec
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
-    val event = mapper.readValue(eventJson, classOf[TriggerEvent])
+    val terminatedEvent = mapper.readValue(terminatedJson, classOf[TriggerEvent])
+    val startingEvent = mapper.readValue(startingJson, classOf[TriggerEvent])
   }
 
-  it must "build message from event" in new Fixture {
-    val actual = MessageBuilder.build(event)
+  it must "build message from terminated event" in new Fixture {
+    val actual = MessageBuilder.build(terminatedEvent)
     val expected =
-      """**Development Cluster**
-        |- j-1YONHTCP3YZKC
+      """**Development Cluster**: j-1YONHTCP3YZKC
         |- TERMINATED
         |- Amazon EMR Cluster j-1YONHTCP3YZKC (Development Cluster) has terminated at 2016-12-16 21:00 UTC with a reason of USER_REQUEST.
+        | """.stripMargin
+
+
+    actual must be(expected)
+  }
+
+  it must "build message from starting event" in new Fixture {
+    val actual = MessageBuilder.build(startingEvent)
+    val expected =
+      """**Development Cluster**: j-1YONHTCP3YZKC
+        |- STARTING
         | """.stripMargin
 
 
