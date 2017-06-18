@@ -53,7 +53,8 @@ class AlertSpec
     val event = mapper.readValue(eventJson, classOf[TriggerEvent])
   }
 
-  it must "send a message" in new Fixture {
+  // Uncomment to test live
+  ignore must "send a message" in new Fixture {
     val alert = new Alert
 
     alert.handler(event, context)
