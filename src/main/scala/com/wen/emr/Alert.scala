@@ -32,18 +32,25 @@ class Alert {
     *
     * @return String of config content
     */
-  def configFromS3: String = {
-    val config = {
-      val s3ConfigFilePath = System.getenv(S3ConfigPath)
-      val s3ConfigFile = new AmazonS3URI(s3ConfigFilePath)
-      val s3 = AmazonS3ClientBuilder.defaultClient
+  def configFromS3: String =
+    s3ConfigFilePath match {
+      case None => throw new RuntimeException(s"$S3ConfigPath environment variable not defined.")
+      case Some(configPath) => {
+        val s3ConfigFile = new AmazonS3URI(configPath)
+        val s3 = AmazonS3ClientBuilder.defaultClient
 
-      val inputStream = s3
-        .getObject(s3ConfigFile.getBucket, s3ConfigFile.getKey)
-        .getObjectContent
-      IOUtils.toString(inputStream)
+        val inputStream = s3
+          .getObject(s3ConfigFile.getBucket, s3ConfigFile.getKey)
+          .getObjectContent
+
+        IOUtils.toString(inputStream)
+      }
     }
-    config
-  }
+
+  /** S3 config path
+    *
+    * @return string value of s3 config path
+    */
+  def s3ConfigFilePath: Option[String] = Option(System.getenv(S3ConfigPath))
 }
 
