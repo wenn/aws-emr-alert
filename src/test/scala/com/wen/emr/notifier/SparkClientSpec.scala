@@ -57,10 +57,8 @@ class SparkClientSpec
   it must "build message from terminated event" in new Fixture {
     val actual = client.build(terminatedEvent)
     val expected =
-      """**Development Cluster**: j-1YONHTCP3YZKC
-        |- TERMINATED
-        |- Amazon EMR Cluster j-1YONHTCP3YZKC (Development Cluster) has terminated at 2016-12-16 21:00 UTC with a reason of USER_REQUEST.
-        | """.stripMargin
+      """**Development Cluster**: j-1YONHTCP3YZKC - TERMINATED
+        |- Amazon EMR Cluster j-1YONHTCP3YZKC (Development Cluster) has terminated at 2016-12-16 21:00 UTC with a reason of USER_REQUEST.""".stripMargin
 
 
     actual must be(expected)
@@ -68,11 +66,7 @@ class SparkClientSpec
 
   it must "build message from starting event" in new Fixture {
     val actual = client.build(startingEvent)
-    val expected =
-      """**Development Cluster**: j-1YONHTCP3YZKC
-        |- STARTING
-        | """.stripMargin
-
+    val expected = s"**Development Cluster**: j-1YONHTCP3YZKC - STARTING"
 
     actual must be(expected)
   }

@@ -10,6 +10,7 @@ libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" 
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.2"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.3" % Test
 
+test in assembly := {}
 assemblyJarName in assembly := "emr-alert.jar"
 
 

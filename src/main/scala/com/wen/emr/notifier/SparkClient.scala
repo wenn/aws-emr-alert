@@ -62,12 +62,11 @@ case class SparkClient(token: Token, room: Room) {
     * @return
     */
   def build(event: TriggerEvent) = {
-    val message = if (!event.detail.message.isEmpty) s"\n|- ${event.detail.message}"
+    val message = if (!event.detail.message.isEmpty) s"\n- ${event.detail.message}"
     else EmptyString
 
-    s"""**${event.detail.name}**: ${event.detail.clusterId}
-        |- ${event.detail.state}$message
-        | """.stripMargin
+    s"**${event.detail.name}**: ${event.detail.clusterId} " +
+      s"- ${event.detail.state}$message"
   }
 
 }
