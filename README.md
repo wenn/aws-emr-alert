@@ -1,7 +1,7 @@
 # AWS EMR alert
 Receive alerts to chat clients from state changes in EMR.
 
-![Spark Client](/images/emr.spark.client.png?raw=true "Spark Client")
+![Spark Client](https://raw.githubusercontent.com/wenn/aws-emr-alert/master/images/emr.spark.chat.png)
 
 ## Setup
 
