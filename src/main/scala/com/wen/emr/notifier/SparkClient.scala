@@ -7,6 +7,8 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 
 
+class RequestException(m: String) extends Exception(m)
+
 case class Token(id: String) {
   override def toString: String = id
 }
@@ -26,11 +28,21 @@ case class SparkClient(token: Token, room: Room) {
 
   /** Sends message to the spark room.
     *
+    * @throws RequestException when not 20* request
     * @param event message to be sent
     * @return [[CloseableHttpResponse]] of Cisco Spark api request
     */
-  def sendMessage(event: TriggerEvent): CloseableHttpResponse =
-    HttpClients.createDefault.execute(postMessage(jsonMessage(build(event))))
+  def sendMessage(event: TriggerEvent): Unit =
+    Some(HttpClients
+      .createDefault
+      .execute(postMessage(jsonMessage(build(event))))
+      .getStatusLine)
+      .map { status =>
+        status.getStatusCode match {
+          case code if code.toString.startsWith("20") => Unit
+          case other => throw new RequestException(s"$other ${status.getReasonPhrase}")
+        }
+      }
 
   /** Cisco spark message api endpoint.
     *
