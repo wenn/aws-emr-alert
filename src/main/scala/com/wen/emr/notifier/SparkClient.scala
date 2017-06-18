@@ -1,6 +1,7 @@
 package com.wen.emr.notifier
 
 import com.google.gson.Gson
+import com.wen.emr.TriggerEvent
 import org.apache.http.client.methods.{CloseableHttpResponse, HttpPost}
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
@@ -21,14 +22,15 @@ case class Message(roomId: String, markdown: String)
   */
 case class SparkClient(token: Token, room: Room) {
 
+  val EmptyString = ""
 
   /** Sends message to the spark room.
     *
-    * @param message message to be sent
+    * @param event message to be sent
     * @return [[CloseableHttpResponse]] of Cisco Spark api request
     */
-  def sendMessage(message: String): CloseableHttpResponse =
-    HttpClients.createDefault.execute(postMessage(jsonMessage(message)))
+  def sendMessage(event: TriggerEvent): CloseableHttpResponse =
+    HttpClients.createDefault.execute(postMessage(jsonMessage(build(event))))
 
   /** Cisco spark message api endpoint.
     *
@@ -52,5 +54,20 @@ case class SparkClient(token: Token, room: Room) {
     */
   def jsonMessage(message: String): String =
     (new Gson).toJson(Message(room.id, message))
+
+
+  /** Build markdown text from [[TriggerEvent]]
+    *
+    * @param event Emr [[TriggerEvent]]
+    * @return
+    */
+  def build(event: TriggerEvent) = {
+    val message = if (!event.detail.message.isEmpty) s"\n|- ${event.detail.message}"
+    else EmptyString
+
+    s"""**${event.detail.name}**: ${event.detail.clusterId}
+        |- ${event.detail.state}$message
+        | """.stripMargin
+  }
 
 }
