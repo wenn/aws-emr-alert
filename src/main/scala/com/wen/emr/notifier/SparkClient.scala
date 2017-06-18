@@ -78,7 +78,7 @@ case class SparkClient(token: Token, room: Room) {
     else EmptyString
 
     s"**${event.detail.name}**: ${event.detail.clusterId} " +
-      s"- ${event.detail.state}$message"
+      s"- ${event.detail.state} *at ${event.time}*$message"
   }
 
 }
