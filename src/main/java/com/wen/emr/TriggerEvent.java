@@ -35,6 +35,15 @@ public class TriggerEvent {
         this.detail = detail;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String region;
     public String id;
     public String time;
 
@@ -48,6 +57,7 @@ public class TriggerEvent {
         return "TriggerEvent{" +
                 "id='" + id + '\'' +
                 ", time='" + time + '\'' +
+                ", region='" + region + '\'' +
                 ", detail=" + detail +
                 '}';
     }

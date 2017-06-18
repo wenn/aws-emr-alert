@@ -33,16 +33,16 @@ case class SparkClient(token: Token, room: Room) {
     * @return [[CloseableHttpResponse]] of Cisco Spark api request
     */
   def sendMessage(event: TriggerEvent): Unit =
-    Some(HttpClients
-      .createDefault
-      .execute(postMessage(jsonMessage(build(event))))
-      .getStatusLine)
-      .map { status =>
-        status.getStatusCode match {
-          case code if code.toString.startsWith("20") => Unit
-          case other => throw new RequestException(s"$other ${status.getReasonPhrase}")
-        }
+  Some(HttpClients
+    .createDefault
+    .execute(postMessage(jsonMessage(build(event))))
+    .getStatusLine)
+    .map { status =>
+      status.getStatusCode match {
+        case code if code.toString.startsWith("20") => Unit
+        case other => throw new RequestException(s"$other ${status.getReasonPhrase}")
       }
+    }
 
   /** Cisco spark message api endpoint.
     *
@@ -65,7 +65,7 @@ case class SparkClient(token: Token, room: Room) {
     * @return Json string
     */
   def jsonMessage(message: String): String =
-    (new Gson).toJson(Message(room.id, message))
+  (new Gson).toJson(Message(room.id, message))
 
 
   /** Build markdown text from [[TriggerEvent]]
@@ -77,7 +77,14 @@ case class SparkClient(token: Token, room: Room) {
     val message = if (!event.detail.message.isEmpty) s"\n- ${event.detail.message}"
     else EmptyString
 
-    s"**${event.detail.name}**: ${event.detail.clusterId} " +
+    def webLink(event: TriggerEvent) = {
+      val uri = "https://console.aws.amazon.com/elasticmapreduce/home" +
+        s"?region=${event.region}#cluster-details:${event.detail.clusterId}"
+
+      s"[${event.detail.clusterId}]($uri)"
+    }
+
+    s"**${event.detail.name}**: ${webLink(event)} " +
       s"- ${event.detail.state} *at ${event.time}*$message"
   }
 
