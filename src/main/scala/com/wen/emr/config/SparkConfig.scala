@@ -12,25 +12,26 @@ trait AppConfig {
   lazy val config = configFromS3
   lazy val token = Token(config.getString("spark.token"))
   lazy val room = Room(config.getString("spark.roomId"))
+  lazy val clusterNameRegex = config.getString("spark.cluster.name.regex")
 
   /** Load config from S3
     *
     * @return String of config content
     */
   def configFromS3: Config =
-    s3ConfigFilePath match {
-      case None => throw new RuntimeException(s"$S3ConfigPath environment variable not defined.")
-      case Some(configPath) => {
-        val s3ConfigFile = new AmazonS3URI(configPath)
-        val s3 = AmazonS3ClientBuilder.defaultClient
+  s3ConfigFilePath match {
+    case None => throw new RuntimeException(s"$S3ConfigPath environment variable not defined.")
+    case Some(configPath) => {
+      val s3ConfigFile = new AmazonS3URI(configPath)
+      val s3 = AmazonS3ClientBuilder.defaultClient
 
-        val inputStream = s3
-          .getObject(s3ConfigFile.getBucket, s3ConfigFile.getKey)
-          .getObjectContent
+      val inputStream = s3
+        .getObject(s3ConfigFile.getBucket, s3ConfigFile.getKey)
+        .getObjectContent
 
-        ConfigFactory.parseString(IOUtils.toString(inputStream))
-      }
+      ConfigFactory.parseString(IOUtils.toString(inputStream))
     }
+  }
 
   /** S3 config path
     *

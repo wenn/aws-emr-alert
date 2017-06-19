@@ -10,7 +10,7 @@ object ClientFactory {
     *
     * @return [[SparkClient]]
     */
-  def create(implicit config: AppConfig = SparkConfig): SparkClient =
+  def create(config: AppConfig): SparkClient =
     SparkClient(
       token = config.token,
       room = config.room

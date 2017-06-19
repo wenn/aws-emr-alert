@@ -23,6 +23,7 @@ class AppConfigSpec
         """
           |spark.roomId=111
           |spark.token=222
+          |spark.cluster.name.matcher=abc
         """.stripMargin
 
       new AppConfig {
@@ -37,5 +38,9 @@ class AppConfigSpec
 
   it must "have a token" in new Fixture {
     config.token must be(Token("222"))
+  }
+
+  it must "have a cluster name matcher" in new Fixture {
+    config.clusterNameRegex must be("abc")
   }
 }
