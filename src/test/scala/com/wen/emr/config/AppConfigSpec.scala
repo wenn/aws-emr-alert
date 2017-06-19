@@ -23,7 +23,7 @@ class AppConfigSpec
         """
           |spark.roomId=111
           |spark.token=222
-          |spark.cluster.name.matcher=abc
+          |spark.cluster.name.regex=abc
         """.stripMargin
 
       new AppConfig {

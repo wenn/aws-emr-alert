@@ -41,7 +41,7 @@ class ClusterMatcherSpec
         """
           |spark.roomId=111
           |spark.token=222
-          |spark.cluster.name.regex="^rib(.*)twn(.*)"
+          |spark.cluster.name.regex="^Dev(.*)Cluster(.*)"
         """.stripMargin
 
       new AppConfig {
