@@ -13,6 +13,11 @@ import com.wen.emr.config.AppConfig
 
 case class ClusterMatcher(config: AppConfig) {
 
+  /** Match [[TriggerEvent]] by `spark.cluster.name.regex`
+    *
+    * @param event the [[TriggerEvent]] to match against
+    * @return maybe [[TriggerEvent]]
+    */
   def matchByName(event: TriggerEvent): Option[TriggerEvent] = {
     config.clusterNameRegex.r.findFirstIn(event.detail.name) match {
       case None => None

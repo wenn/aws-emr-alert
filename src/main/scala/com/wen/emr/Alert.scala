@@ -3,6 +3,7 @@ package com.wen.emr
 import com.amazonaws.services.lambda.runtime.Context
 import com.wen.emr.client.ClientFactory
 import com.wen.emr.config.SparkConfig
+import com.wen.emr.matcher.ClusterMatcher
 
 class Alert {
   /** Handler for AWS lambda
@@ -17,9 +18,10 @@ class Alert {
     * @param event [[TriggerEvent]] for EMR
     */
   def send(event: TriggerEvent): Unit = {
-    val client = ClientFactory.create(SparkConfig)
-
-    client.sendMessage(event)
+    ClusterMatcher(SparkConfig).matchByName(event).foreach {e =>
+      val client = ClientFactory.create(SparkConfig)
+      client.sendMessage(e)
+    }
   }
 
 }
