@@ -33,16 +33,16 @@ case class SparkClient(token: Token, room: Room) {
     * @return [[CloseableHttpResponse]] of Cisco Spark api request
     */
   def sendMessage(event: TriggerEvent): Unit =
-  Some(HttpClients
-    .createDefault
-    .execute(postMessage(jsonMessage(build(event))))
-    .getStatusLine)
-    .map { status =>
-      status.getStatusCode match {
-        case code if code.toString.startsWith("20") => Unit
-        case other => throw new RequestException(s"$other ${status.getReasonPhrase}")
+    Some(HttpClients
+      .createDefault
+      .execute(postMessage(jsonMessage(build(event))))
+      .getStatusLine)
+      .map { status =>
+        status.getStatusCode match {
+          case code if code.toString.startsWith("20") => Unit
+          case other => throw new RequestException(s"$other ${status.getReasonPhrase}")
+        }
       }
-    }
 
   /** Cisco spark message api endpoint.
     *
@@ -65,7 +65,7 @@ case class SparkClient(token: Token, room: Room) {
     * @return Json string
     */
   def jsonMessage(message: String): String =
-  (new Gson).toJson(Message(room.id, message))
+    (new Gson).toJson(Message(room.id, message))
 
 
   /** Build markdown text from [[TriggerEvent]]
