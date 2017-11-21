@@ -25,6 +25,7 @@ class AppConfigSpec
           |spark.token=222
           |spark.cluster.name.regex=abc
           |spark.cluster.status=" STARTING, WAITING    "
+          |spark.cluster.step.status=" CANCELLED, FAILED    "
         """.stripMargin
 
       new AppConfig {
@@ -46,7 +47,7 @@ class AppConfigSpec
   }
 
   it must "have a cluster statuses to watch" in new Fixture {
-    config.clusterStatuses.sorted must be(
+    config.allowClusterStatuses.sorted must be(
       Seq(
         "STARTING",
         "WAITING"
@@ -54,6 +55,26 @@ class AppConfigSpec
     )
   }
 
+  it must "have a step statuses to watch" in new Fixture {
+    config.allowStepStatuses.sorted must be(
+      Seq(
+        "CANCELLED",
+        "FAILED"
+      ).sorted
+    )
+  }
+
+  it must "have default step statuses" in {
+    val config = {
+      new AppConfig {
+        override def configFromS3: Config = ConfigFactory.parseString("")
+      }
+    }
+
+    config.allowStepStatuses must be(
+      Seq("FAILED")
+    )
+  }
   it must "have default cluster statuses" in {
     val config = {
       new AppConfig {
@@ -61,7 +82,7 @@ class AppConfigSpec
       }
     }
 
-    config.clusterStatuses.sorted must be(
+    config.allowClusterStatuses.sorted must be(
       Seq(
         "STARTING",
         "TERMINATED",
@@ -83,21 +104,9 @@ class AppConfigSpec
     }
 
     val error = intercept[IllegalArgumentException] {
-      badConfig.clusterStatuses
+      badConfig.allowClusterStatuses
     }
 
     error.getMessage must be("Not a valid status=BAD")
-  }
-
-  it must "have cluster status" in new Fixture {
-    val has = config.hasClusterStatus("WAITING")
-
-    has must be(true)
-  }
-
-  it must "not have cluster status" in new Fixture {
-    val has = config.hasClusterStatus("TERMINATED")
-
-    has must be(false)
   }
 }

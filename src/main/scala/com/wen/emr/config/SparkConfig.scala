@@ -15,17 +15,8 @@ trait AppConfig {
   lazy val room = Room(config.getString("spark.roomId"))
   lazy val clusterNameRegex = config.getString("spark.cluster.name.regex")
 
-  lazy private[config] val clusterStatuses = ClusterStatuses.parse({
-    val defaultClusterStatus = Seq(
-      ClusterStatuses.STARTING,
-      ClusterStatuses.TERMINATED,
-      ClusterStatuses.TERMINATED_WITH_ERRORS
-    ).mkString(",")
-
-    onMissing(defaultClusterStatus) {
-      config.getString("spark.cluster.status")
-    }
-  })
+  lazy val allowClusterStatuses = ClusterStatuses.parseFromKey("spark.cluster.status")
+  lazy val allowStepStatuses = StepStatuses.parseFromKey("spark.cluster.step.status")
 
   /** Load config from S3
     *
@@ -52,17 +43,23 @@ trait AppConfig {
     */
   def s3ConfigFilePath: Option[String] = Option(System.getenv(S3ConfigPath))
 
-  def hasClusterStatus(status: String): Boolean = clusterStatuses.contains(status)
+  private trait Statuses {
 
-  private object ClusterStatuses {
+    /** Parse statuses from key.
+      *
+      * @param configKey config key to parse from.
+      * @return [[Seq]] of statuses.
+      */
+    def parseFromKey(configKey: String): Seq[String] = onMissing(defaults) {
+      parseFromValue(config.getString(configKey))
+    }
 
-    val STARTING = "STARTING"
-    val WAITING = "WAITING"
-    val RUNNING = "RUNNING"
-    val TERMINATED = "TERMINATED"
-    val TERMINATED_WITH_ERRORS = "TERMINATED_WITH_ERRORS"
-
-    def parse(statuses: String) = statuses
+    /** Parse statuses from value.
+      *
+      * @param statuses config values of statuses to parse from.
+      * @return [[Seq]] of statuses.
+      */
+    def parseFromValue(statuses: String): Seq[String] = statuses
       .split(',')
       .map {s =>
         val status = s.trim
@@ -73,19 +70,47 @@ trait AppConfig {
         status
       }
 
-    private val validStatuses = Seq(STARTING, WAITING, RUNNING, TERMINATED,
-      TERMINATED_WITH_ERRORS)
+    private[config] val statuses: Seq[String]
+    private[config] val defaults: Seq[String]
 
-    private def valid(status: String): Boolean = validStatuses.contains(status)
+    private def valid(status: String): Boolean = statuses.contains(status)
+
+    private def onMissing[T](default: T)
+                            (fn: => T) = {
+      try {
+        fn
+      } catch {
+        case e: Missing => default
+      }
+    }
   }
 
-  private def onMissing[T](default: T)
-                          (fn: => T) = {
-    try {
-      fn
-    } catch {
-      case e: Missing => default
-    }
+  private object ClusterStatuses extends Statuses {
+    val STARTING = "STARTING"
+    val WAITING = "WAITING"
+    val RUNNING = "RUNNING"
+    val TERMINATED = "TERMINATED"
+    val TERMINATED_WITH_ERRORS = "TERMINATED_WITH_ERRORS"
+
+    override private[config] val defaults = Seq(STARTING, TERMINATED,
+      TERMINATED_WITH_ERRORS)
+
+    override private[config] val statuses = Seq(STARTING, WAITING, RUNNING, TERMINATED,
+      TERMINATED_WITH_ERRORS)
+  }
+
+  private object StepStatuses extends Statuses {
+    val CANCEL_PENDING = "CANCEL_PENDING"
+    val CANCELLED = "CANCELLED"
+    val COMPLETED = "COMPLETED"
+    val FAILED = "FAILED"
+    val PENDING = "PENDING"
+    val RUNNING = "RUNNING"
+
+    override private[config] val defaults = Seq(FAILED)
+
+    override private[config] val statuses = Seq(CANCEL_PENDING, CANCELLED, COMPLETED,
+      FAILED, PENDING, RUNNING)
   }
 
 }

@@ -1,5 +1,7 @@
 package com.wen.emr;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * AWS CloudWatch event POJO
  */
@@ -43,9 +45,20 @@ public class TriggerEvent {
         this.region = region;
     }
 
+    public String getDetailType() {
+        return detailType;
+    }
+
+    public void setDetailType(String detailType) {
+        this.detailType = detailType;
+    }
+
     public String region;
     public String id;
     public String time;
+
+    @JsonProperty("detail-type")
+    public String detailType;
 
     /**
      * Cluster event detail
@@ -57,6 +70,7 @@ public class TriggerEvent {
         return "TriggerEvent{" +
                 "id='" + id + '\'' +
                 ", time='" + time + '\'' +
+                ", detailType='" + detailType + '\'' +
                 ", region='" + region + '\'' +
                 ", detail=" + detail +
                 '}';

@@ -9,8 +9,9 @@ libraryDependencies += "com.google.code.gson" % "gson" % "2.8.1"
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 libraryDependencies += "com.amazonaws" % "aws-java-sdk-s3" % "1.11.149"
 
-libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.8" % Test
-libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.2" % Test
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.8"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.2.2"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-annotations" % "2.2.2"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.3" % Test
 
 test in assembly := {}

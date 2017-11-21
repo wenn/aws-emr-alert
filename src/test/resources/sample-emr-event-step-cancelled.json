@@ -1,0 +1,19 @@
+{
+  "version": "0",
+  "id": "6965277f-1f52-4564-9f7b-ae90b0ce2294",
+  "detail-type": "EMR Step Status Change",
+  "source": "aws.emr",
+  "account": "123456789012",
+  "time": "2016-12-16T20:53:09Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+    "severity": "INFO",
+    "actionOnFailure": "CONTINUE",
+    "stepId": "s-36ZWOFMZ19IUZ",
+    "name": "CustomJAR",
+    "clusterId": "j-1YONHTCP3YZKC",
+    "state": "CANCELLED",
+    "message": "Step s-36ZWOFMZ19IUZ (CustomJAR) in Amazon EMR cluster j-1YONHTCP3YZKC (Development Cluster) cancelled at 2016-12-16 20:53 UTC."
+  }
+}

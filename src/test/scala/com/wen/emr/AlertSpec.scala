@@ -1,12 +1,11 @@
 package com.wen.emr
 
-import scala.io.Source
-
 import org.scalatest.{FlatSpec, MustMatchers}
 
 import com.amazonaws.services.lambda.runtime.{ClientContext, CognitoIdentity, Context, LambdaLogger}
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.typesafe.config.{Config, ConfigFactory}
+import com.wen.emr.common.TestHelper
+import com.wen.emr.config.AppConfig
 
 class AlertSpec
   extends FlatSpec
@@ -38,26 +37,18 @@ class AlertSpec
     }
 
 
-    def eventFromFile(file: String) = {
-      val eventJson = {
-        Source.fromInputStream(
-          getClass
-            .getResourceAsStream(file))
-          .getLines
-          .mkString
-      }
-
-      val mapper = {
-        (new ObjectMapper)
-          .registerModule(DefaultScalaModule)
-          .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      }
-
-      mapper.readValue(eventJson, classOf[TriggerEvent])
-    }
-
     object MockAlert extends Alert {
       var sent = false
+
+      override val config = new AppConfig {
+        val raw =
+          """
+            |spark.cluster.status="STARTING"
+            |spark.cluster.step.status="FAILED"
+          """.stripMargin
+
+        override def configFromS3: Config = ConfigFactory.parseString(raw)
+      }
 
       override def sendMessage(event: TriggerEvent): Unit = sent = true
 
@@ -69,20 +60,20 @@ class AlertSpec
   // Uncomment to test live
   ignore must "send a message" in new Fixture {
     val alert = new Alert
-    val event = eventFromFile("/sample-emr-event-starting.json")
+    val event = TestHelper.event("/sample-emr-event-starting.json")
 
     alert.handler(event, context)
   }
 
   it must "send a message if status is match" in new Fixture {
-    val event = eventFromFile("/sample-emr-event-starting.json")
+    val event = TestHelper.event("/sample-emr-event-starting.json")
 
     MockAlert.send(event)
     MockAlert.sent must be(true)
   }
 
   it must "not send a message if status does not match" in new Fixture {
-    val event = eventFromFile("/sample-emr-event-waiting.json")
+    val event = TestHelper.event("/sample-emr-event-waiting.json")
 
     MockAlert.send(event)
     MockAlert.sent must be(false)
