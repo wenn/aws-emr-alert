@@ -64,8 +64,9 @@ class AppConfigSpec
     config.clusterStatuses.sorted must be(
       Seq(
         "STARTING",
-        "TERMINATED"
-      )
+        "TERMINATED",
+        "TERMINATED_WITH_ERRORS"
+      ).sorted
     )
   }
 

@@ -18,7 +18,8 @@ trait AppConfig {
   lazy private[config] val clusterStatuses = ClusterStatuses.parse({
     val defaultClusterStatus = Seq(
       ClusterStatuses.STARTING,
-      ClusterStatuses.TERMINATED
+      ClusterStatuses.TERMINATED,
+      ClusterStatuses.TERMINATED_WITH_ERRORS
     ).mkString(",")
 
     onMissing(defaultClusterStatus) {
@@ -59,6 +60,7 @@ trait AppConfig {
     val WAITING = "WAITING"
     val RUNNING = "RUNNING"
     val TERMINATED = "TERMINATED"
+    val TERMINATED_WITH_ERRORS = "TERMINATED_WITH_ERRORS"
 
     def parse(statuses: String) = statuses
       .split(',')
@@ -71,7 +73,8 @@ trait AppConfig {
         status
       }
 
-    private val validStatuses = Seq(STARTING, WAITING, RUNNING, TERMINATED)
+    private val validStatuses = Seq(STARTING, WAITING, RUNNING, TERMINATED,
+      TERMINATED_WITH_ERRORS)
 
     private def valid(status: String): Boolean = validStatuses.contains(status)
   }
