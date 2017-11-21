@@ -24,6 +24,7 @@ Receive alerts to chat clients from state changes in EMR.
 spark.roomId=<room id>
 spark.token=<api token>
 spark.cluster.name.regex=<regex to match cluster name>
+spark.cluster.status="WAITING,STARTING"
 ```
 
 ## Client Support

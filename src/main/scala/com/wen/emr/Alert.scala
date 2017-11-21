@@ -13,16 +13,27 @@ class Alert {
     */
   def handler(event: TriggerEvent, context: Context): Unit = send(event)
 
-  /** Send message to client
+  /** Send the event.
     *
     * @param event [[TriggerEvent]] for EMR
     */
   def send(event: TriggerEvent): Unit = {
-    ClusterMatcher(SparkConfig).matchByName(event).foreach {e =>
-      val client = ClientFactory.create(SparkConfig)
-      client.sendMessage(e)
-    }
+    matchEvent(event)
+      .foreach {e =>
+        if (hasStatus(e)) {
+          sendMessage(event)
+        }
+      }
   }
 
+  def sendMessage(event: TriggerEvent): Unit = ClientFactory
+    .create(SparkConfig)
+    .sendMessage(event)
+
+  def hasStatus(event: TriggerEvent): Boolean = SparkConfig
+    .hasClusterStatus(event.getDetail.getState)
+
+  def matchEvent(event: TriggerEvent): Option[TriggerEvent] = ClusterMatcher(SparkConfig)
+    .matchByName(event)
 }
 
