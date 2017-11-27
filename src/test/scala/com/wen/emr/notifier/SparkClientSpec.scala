@@ -1,11 +1,8 @@
 package com.wen.emr.notifier
 
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.wen.emr.TriggerEvent
 import org.scalatest.{FlatSpec, MustMatchers}
 
-import scala.io.Source
+import com.wen.emr.common.TestHelper
 
 class SparkClientSpec
   extends FlatSpec
@@ -16,25 +13,8 @@ class SparkClientSpec
     val room = Room("22222")
     val client = SparkClient(token, room)
 
-    val terminatedJson = readFile("/sample-emr-event-terminated.json")
-    val startingJson = readFile("/sample-emr-event-starting.json")
-
-    def readFile(filePath: String) = {
-      Source.fromInputStream(
-        getClass
-          .getResourceAsStream(filePath))
-        .getLines
-        .mkString
-    }
-
-    val mapper = {
-      (new ObjectMapper)
-        .registerModule(DefaultScalaModule)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
-
-    val terminatedEvent = mapper.readValue(terminatedJson, classOf[TriggerEvent])
-    val startingEvent = mapper.readValue(startingJson, classOf[TriggerEvent])
+    val terminatedEvent = TestHelper.event("/sample-emr-event-terminated.json")
+    val startingEvent = TestHelper.event("/sample-emr-event-starting.json")
   }
 
   it must "have a json message" in new Fixture {

@@ -9,11 +9,10 @@
 package com.wen.emr.common
 
 
-import scala.io.Source
+import java.io.InputStream
 
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.wen.emr.TriggerEvent
+import com.wen.emr.event.Json
 
 object TestHelper {
 
@@ -22,21 +21,13 @@ object TestHelper {
     * @param resource resource path.
     * @return [[TriggerEvent]]
     */
-  def event(resource: String): TriggerEvent = {
-    val eventJson = {
-      Source.fromInputStream(
-        getClass
-          .getResourceAsStream(resource))
-        .getLines
-        .mkString
-    }
+  def event(resource: String): TriggerEvent = Json.load(inputStream(resource))
 
-    val mapper = {
-      (new ObjectMapper)
-        .registerModule(DefaultScalaModule)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
 
-    mapper.readValue(eventJson, classOf[TriggerEvent])
-  }
+  /** [[InputStream]] from resource file
+    *
+    * @param resource resource path.
+    * @return [[InputStream]]
+    */
+  def inputStream(resource: String): InputStream = getClass.getResourceAsStream(resource)
 }

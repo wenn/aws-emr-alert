@@ -1,9 +1,12 @@
 package com.wen.emr
 
+
+import java.io.{InputStream, OutputStream}
+
 import com.amazonaws.services.lambda.runtime.Context
 import com.wen.emr.client.ClientFactory
 import com.wen.emr.config.{AppConfig, SparkConfig}
-import com.wen.emr.event.Trigger
+import com.wen.emr.event.{Json, Trigger}
 import com.wen.emr.matcher.ClusterMatcher
 
 class Alert {
@@ -12,10 +15,12 @@ class Alert {
 
   /** Handler for AWS lambda
     *
-    * @param event   [[TriggerEvent]] for EMR
+    * @param input   [[InputStream]] of an event object from EMR
+    * @param output  [[OutputStream]] the return output stream ( not used here ).
     * @param context [[Context]] Lambda context
     */
-  def handler(event: TriggerEvent, context: Context): Unit = send(event)
+  def handler(input: InputStream, output: OutputStream, context: Context): Unit =
+    send(Json.load(input))
 
   /** Send the event.
     *

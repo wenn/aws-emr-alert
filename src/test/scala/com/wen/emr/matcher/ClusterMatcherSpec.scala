@@ -8,14 +8,10 @@
  */
 package com.wen.emr.matcher
 
-import scala.io.Source
-
 import org.scalatest.{FlatSpec, MustMatchers}
 
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.typesafe.config.{Config, ConfigFactory}
-import com.wen.emr.TriggerEvent
+import com.wen.emr.common.TestHelper
 import com.wen.emr.config.AppConfig
 
 class ClusterMatcherSpec
@@ -50,27 +46,8 @@ class ClusterMatcherSpec
     }
 
 
-    val event = {
-      def readFile(filePath: String) = {
-        Source.fromInputStream(
-          getClass
-            .getResourceAsStream(filePath))
-          .getLines
-          .mkString
-      }
-
-      val eventJson = readFile("/sample-emr-event-terminated.json")
-
-      val mapper = {
-        (new ObjectMapper)
-          .registerModule(DefaultScalaModule)
-          .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      }
-
-      mapper.readValue(eventJson, classOf[TriggerEvent])
-    }
+    val event = TestHelper.event("/sample-emr-event-terminated.json")
   }
-
 
   it must "include event if cluster name a match" in new Fixture {
     val matcher = ClusterMatcher(configWithMatch)

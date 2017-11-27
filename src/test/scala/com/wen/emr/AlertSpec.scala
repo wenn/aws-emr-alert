@@ -1,6 +1,10 @@
 package com.wen.emr
 
+import java.io.OutputStream
+
 import org.scalatest.{FlatSpec, MustMatchers}
+
+import sun.corba.OutputStreamFactory
 
 import com.amazonaws.services.lambda.runtime.{ClientContext, CognitoIdentity, Context, LambdaLogger}
 import com.typesafe.config.{Config, ConfigFactory}
@@ -55,14 +59,6 @@ class AlertSpec
       override def matchEvent(event: TriggerEvent) = Some(event)
     }
 
-  }
-
-  // Uncomment to test live
-  ignore must "send a message" in new Fixture {
-    val alert = new Alert
-    val event = TestHelper.event("/sample-emr-event-starting.json")
-
-    alert.handler(event, context)
   }
 
   it must "send a message if status is match" in new Fixture {

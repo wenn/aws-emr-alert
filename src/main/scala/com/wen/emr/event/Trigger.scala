@@ -23,10 +23,11 @@ object Trigger {
     */
   def hasStatus(config: AppConfig,
                 event: TriggerEvent): Boolean = {
-    event.getDetailType.trim match {
-      case StepDetailType => config.allowStepStatuses.contains(event.getDetail.getState)
-      case ClusterDetailType => config.allowClusterStatuses.contains(event.getDetail.getState)
-      case _ => throw new IllegalArgumentException(s"[${event.getDetailType}] not handled.")
+    println(s"test 1: $event")
+    event.detailType.trim match {
+      case StepDetailType => config.allowStepStatuses.contains(event.detail.state)
+      case ClusterDetailType => config.allowClusterStatuses.contains(event.detail.state)
+      case _ => throw new IllegalArgumentException(s"[${event.detailType}] not handled.")
     }
   }
 }

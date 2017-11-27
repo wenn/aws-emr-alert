@@ -1,6 +1,6 @@
 package com.wen.emr;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * AWS CloudWatch event POJO
@@ -13,51 +13,11 @@ public class TriggerEvent {
     public TriggerEvent() {
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public Detail getDetail() {
-        return detail;
-    }
-
-    public void setDetail(Detail detail) {
-        this.detail = detail;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getDetailType() {
-        return detailType;
-    }
-
-    public void setDetailType(String detailType) {
-        this.detailType = detailType;
-    }
-
     public String region;
     public String id;
     public String time;
 
-    @JsonProperty("detail-type")
+    @SerializedName("detail-type")
     public String detailType;
 
     /**
