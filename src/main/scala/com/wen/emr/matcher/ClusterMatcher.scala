@@ -8,17 +8,17 @@
  */
 package com.wen.emr.matcher
 
-import com.wen.emr.TriggerEvent
 import com.wen.emr.config.AppConfig
+import com.wen.emr.event.RichTriggerEvent
 
 case class ClusterMatcher(config: AppConfig) {
 
-  /** Match [[TriggerEvent]] by `spark.cluster.name.regex`
+  /** Match [[RichTriggerEvent]] by `spark.cluster.name.regex`
     *
-    * @param event the [[TriggerEvent]] to match against
-    * @return maybe [[TriggerEvent]]
+    * @param event the [[RichTriggerEvent]] to match against
+    * @return maybe [[RichTriggerEvent]]
     */
-  def matchByName(event: TriggerEvent): Option[TriggerEvent] = {
+  def matchByName(event: RichTriggerEvent): Option[RichTriggerEvent] = {
     config.clusterNameRegex.r.findFirstIn(event.detail.name) match {
       case None => None
       case other => Some(event)

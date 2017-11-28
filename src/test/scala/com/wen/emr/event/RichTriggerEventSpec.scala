@@ -14,7 +14,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import com.wen.emr.common.TestHelper
 import com.wen.emr.config.AppConfig
 
-class TriggerSpec
+class RichTriggerEventSpec
   extends FlatSpec
     with MustMatchers {
 
@@ -30,28 +30,28 @@ class TriggerSpec
 
   it must "have status for a step" in {
     val event = TestHelper.event("/sample-emr-event-step-failed.json")
-    val status = Trigger.hasStatus(config, event)
+    val status = event.hasStatus(config)
 
     status must be(true)
   }
 
   it must "not have a status for a step" in {
     val event = TestHelper.event("/sample-emr-event-step-cancelled.json")
-    val status = Trigger.hasStatus(config, event)
+    val status = event.hasStatus(config)
 
     status must be(false)
   }
 
   it must "have a status for a cluster" in {
     val event = TestHelper.event("/sample-emr-event-terminated.json")
-    val status = Trigger.hasStatus(config, event)
+    val status = event.hasStatus(config)
 
     status must be(true)
   }
 
   it must "not have a status for a cluster" in {
     val event = TestHelper.event("/sample-emr-event-starting.json")
-    val status = Trigger.hasStatus(config, event)
+    val status = event.hasStatus(config)
 
     status must be(false)
   }

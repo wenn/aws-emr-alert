@@ -6,7 +6,7 @@ import java.io.{InputStream, OutputStream}
 import com.amazonaws.services.lambda.runtime.Context
 import com.wen.emr.client.ClientFactory
 import com.wen.emr.config.{AppConfig, SparkConfig}
-import com.wen.emr.event.{Json, Trigger}
+import com.wen.emr.event.{Json, RichTriggerEvent}
 import com.wen.emr.matcher.ClusterMatcher
 
 class Alert {
@@ -24,9 +24,9 @@ class Alert {
 
   /** Send the event.
     *
-    * @param event [[TriggerEvent]] for EMR
+    * @param event [[RichTriggerEvent]] for EMR
     */
-  def send(event: TriggerEvent): Unit = {
+  def send(event: RichTriggerEvent): Unit = {
     matchEvent(event)
       .foreach {e =>
         if (hasStatus(e)) {
@@ -35,13 +35,13 @@ class Alert {
       }
   }
 
-  def sendMessage(event: TriggerEvent): Unit = ClientFactory
+  def sendMessage(event: RichTriggerEvent): Unit = ClientFactory
     .create(config)
     .sendMessage(event)
 
-  def hasStatus(event: TriggerEvent): Boolean = Trigger.hasStatus(config, event)
+  def hasStatus(event: RichTriggerEvent): Boolean = event.hasStatus(config)
 
-  def matchEvent(event: TriggerEvent): Option[TriggerEvent] = ClusterMatcher(config)
+  def matchEvent(event: RichTriggerEvent): Option[RichTriggerEvent] = ClusterMatcher(config)
     .matchByName(event)
 }
 

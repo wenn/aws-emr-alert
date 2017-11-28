@@ -1,10 +1,11 @@
 package com.wen.emr.notifier
 
-import com.google.gson.Gson
-import com.wen.emr.TriggerEvent
 import org.apache.http.client.methods.{CloseableHttpResponse, HttpPost}
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
+
+import com.google.gson.Gson
+import com.wen.emr.event.RichTriggerEvent
 
 
 class RequestException(m: String) extends Exception(m)
@@ -32,12 +33,12 @@ case class SparkClient(token: Token, room: Room) {
     * @param event message to be sent
     * @return [[CloseableHttpResponse]] of Cisco Spark api request
     */
-  def sendMessage(event: TriggerEvent): Unit =
+  def sendMessage(event: RichTriggerEvent): Unit =
     Some(HttpClients
       .createDefault
       .execute(postMessage(jsonMessage(build(event))))
       .getStatusLine)
-      .map { status =>
+      .map {status =>
         status.getStatusCode match {
           case code if code.toString.startsWith("20") => Unit
           case other => throw new RequestException(s"$other ${status.getReasonPhrase}")
@@ -68,16 +69,16 @@ case class SparkClient(token: Token, room: Room) {
     (new Gson).toJson(Message(room.id, message))
 
 
-  /** Build markdown text from [[TriggerEvent]]
+  /** Build markdown text from [[RichTriggerEvent]]
     *
-    * @param event Emr [[TriggerEvent]]
+    * @param event Emr [[RichTriggerEvent]]
     * @return
     */
-  def build(event: TriggerEvent) = {
+  def build(event: RichTriggerEvent) = {
     val message = if (!event.detail.message.isEmpty) s"\n- ${event.detail.message}"
     else EmptyString
 
-    def webLink(event: TriggerEvent) = {
+    def webLink(event: RichTriggerEvent) = {
       val uri = "https://console.aws.amazon.com/elasticmapreduce/home" +
         s"?region=${event.region}#cluster-details:${event.detail.clusterId}"
 

@@ -10,6 +10,7 @@ import com.amazonaws.services.lambda.runtime.{ClientContext, CognitoIdentity, Co
 import com.typesafe.config.{Config, ConfigFactory}
 import com.wen.emr.common.TestHelper
 import com.wen.emr.config.AppConfig
+import com.wen.emr.event.RichTriggerEvent
 
 class AlertSpec
   extends FlatSpec
@@ -54,9 +55,9 @@ class AlertSpec
         override def configFromS3: Config = ConfigFactory.parseString(raw)
       }
 
-      override def sendMessage(event: TriggerEvent): Unit = sent = true
+      override def sendMessage(event: RichTriggerEvent): Unit = sent = true
 
-      override def matchEvent(event: TriggerEvent) = Some(event)
+      override def matchEvent(event: RichTriggerEvent) = Some(event)
     }
 
   }

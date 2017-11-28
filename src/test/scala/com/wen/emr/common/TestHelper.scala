@@ -11,17 +11,16 @@ package com.wen.emr.common
 
 import java.io.InputStream
 
-import com.wen.emr.TriggerEvent
-import com.wen.emr.event.Json
+import com.wen.emr.event.{Json, RichTriggerEvent}
 
 object TestHelper {
 
-  /** [[TriggerEvent]] from resource file.
+  /** [[RichTriggerEvent]] from resource file.
     *
     * @param resource resource path.
-    * @return [[TriggerEvent]]
+    * @return [[RichTriggerEvent]]
     */
-  def event(resource: String): TriggerEvent = Json.load(inputStream(resource))
+  def event(resource: String): RichTriggerEvent = Json.load(inputStream(resource))
 
 
   /** [[InputStream]] from resource file
