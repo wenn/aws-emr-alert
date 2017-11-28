@@ -56,4 +56,15 @@ class RichTriggerEventSpec
     status must be(false)
   }
 
+  it must "have an event type for a cluster" in {
+    val event = TestHelper.event("/sample-emr-event-starting.json")
+
+    event.eventType must be(Type.Cluster)
+  }
+
+  it must "have an event type for a step" in {
+    val event = TestHelper.event("/sample-emr-event-step-cancelled.json")
+
+    event.eventType must be(Type.Step)
+  }
 }

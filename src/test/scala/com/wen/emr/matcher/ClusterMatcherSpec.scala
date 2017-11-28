@@ -37,7 +37,7 @@ class ClusterMatcherSpec
         """
           |spark.roomId=111
           |spark.token=222
-          |spark.cluster.name.regex="^Dev(.*)Cluster(.*)"
+          |spark.cluster.name.regex="Development(.*)Cluster(.*)"
         """.stripMargin
 
       new AppConfig {
@@ -46,16 +46,33 @@ class ClusterMatcherSpec
     }
 
 
-    val event = TestHelper.event("/sample-emr-event-terminated.json")
   }
 
   it must "include event if cluster name a match" in new Fixture {
+    val event = TestHelper.event("/sample-emr-event-terminated.json")
     val matcher = ClusterMatcher(configWithMatch)
+
     matcher.matchByName(event) must be(Some(event))
   }
 
   it must "exclude event if cluster name is not a match" in new Fixture {
+    val event = TestHelper.event("/sample-emr-event-terminated.json")
     val matcher = ClusterMatcher(configWithoutMatch)
+
+    matcher.matchByName(event) must be(None)
+  }
+
+  it must "include event if step name a match" in new Fixture {
+    val event = TestHelper.event("/sample-emr-event-step-failed.json")
+    val matcher = ClusterMatcher(configWithMatch)
+
+    matcher.matchByName(event) must be(Some(event))
+  }
+
+  it must "exclude event if step name is not a match" in new Fixture {
+    val event = TestHelper.event("/sample-emr-event-step-failed.json")
+    val matcher = ClusterMatcher(configWithoutMatch)
+
     matcher.matchByName(event) must be(None)
   }
 

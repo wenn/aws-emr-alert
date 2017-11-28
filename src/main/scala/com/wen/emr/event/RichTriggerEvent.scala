@@ -10,22 +10,34 @@ package com.wen.emr.event
 
 import com.wen.emr.TriggerEvent
 import com.wen.emr.config.AppConfig
+import com.wen.emr.event.Type.EventType
 
 class RichTriggerEvent extends TriggerEvent {
-  val StepDetailType = "EMR Step Status Change"
-  val ClusterDetailType = "EMR Cluster State Change"
+
+  private val StepDetailType = "EMR Step Status Change"
+  private val ClusterDetailType = "EMR Cluster State Change"
+
+  /** [[EventType]] of the [[RichTriggerEvent]].
+    *
+    * @throws IllegalArgumentException if neither `StepDetailType`
+    *                                  nor `ClusterDetailType`.
+    * @return [[EventType]]
+    */
+  def eventType: EventType = detailType.trim match {
+    case StepDetailType => Type.Step
+    case ClusterDetailType => Type.Cluster
+    case _ => throw new IllegalArgumentException(s"[$detailType] " +
+      s"not handled.")
+  }
 
   /** `true` if status match config for cluster and step.
     *
-    * @throws IllegalArgumentException if neither `StepDetailType` nor `ClusterDetailType`
     * @return [[Boolean]]
     */
   def hasStatus(config: AppConfig): Boolean = {
-    this.detailType.trim match {
-      case StepDetailType => config.allowStepStatuses.contains(this.detail.state)
-      case ClusterDetailType => config.allowClusterStatuses.contains(this.detail.state)
-      case _ => throw new IllegalArgumentException(s"[${this.detailType}] " +
-        s"not handled.")
+    eventType match {
+      case Type.Step => config.allowStepStatuses.contains(detail.state)
+      case Type.Cluster => config.allowClusterStatuses.contains(detail.state)
     }
   }
 }

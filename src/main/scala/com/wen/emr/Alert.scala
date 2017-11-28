@@ -35,13 +35,16 @@ class Alert {
       }
   }
 
-  def sendMessage(event: RichTriggerEvent): Unit = ClientFactory
-    .create(config)
-    .sendMessage(event)
+  def sendMessage(event: RichTriggerEvent): Unit =
+    ClientFactory
+      .create(config)
+      .sendMessage(event)
 
-  def hasStatus(event: RichTriggerEvent): Boolean = event.hasStatus(config)
+  def hasStatus(event: RichTriggerEvent): Boolean =
+    event.hasStatus(config)
 
-  def matchEvent(event: RichTriggerEvent): Option[RichTriggerEvent] = ClusterMatcher(config)
-    .matchByName(event)
+  def matchEvent(event: RichTriggerEvent): Option[RichTriggerEvent] =
+    ClusterMatcher(config)
+      .matchByName(event)
 }
 
